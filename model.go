@@ -21,7 +21,8 @@ func (u *user) getUser(db *sql.DB) error {
 }
 
 func (u *user) updateUser(db *sql.DB) error {
-	rows, err := db.Query("SELECT * from contact where email=$1 and id!=$2", u.Email, u.ID)
+	statement := fmt.Sprintf("SELECT * from contact where email='%s'", u.Email)
+	rows, err := db.Query(statement)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -42,8 +43,8 @@ func (u *user) deleteUser(db *sql.DB) error {
 }
 
 func (u *user) createUser(db *sql.DB) error {
-
-	rows, err := db.Query("SELECT * from contact where email=$1", u.Email)
+	statement := fmt.Sprintf("SELECT * from contact where email='%s'", u.Email)
+	rows, err := db.Query(statement)
 	if err != nil {
 		log.Fatal(err)
 	}
