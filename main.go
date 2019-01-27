@@ -8,5 +8,5 @@ func main() {
 
 	a.Initialize(os.Getenv("USERNSME"), os.Getenv("PASSWORD"), os.Getenv("DBSTRING"))
 
-	a.Run(":8080")
+	a.Run(":" + os.Getenv("PORT"))
 }
