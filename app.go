@@ -37,6 +37,7 @@ func (a *Apps) Run(addr string) {
 
 func (a *Apps) initializeRoutes() {
 	a.Router.HandleFunc("/contact", a.getUsers).Methods("GET")
+	a.Router.HandleFunc("/contact/search", a.getSpecificUser).Methods("GET")
 	a.Router.HandleFunc("/contact", a.createUser).Methods("POST")
 	a.Router.HandleFunc("/contact/{id:[0-9]+}", a.getUser).Methods("GET")
 	a.Router.HandleFunc("/contact/{id:[0-9]+}", a.updateUser).Methods("PUT")
@@ -55,6 +56,19 @@ func (a *Apps) getUsers(w http.ResponseWriter, r *http.Request) {
 	}
 
 	products, err := getUsers(a.DB, start, count)
+	if err != nil {
+		respondWithError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	respondWithJSON(w, http.StatusOK, products)
+}
+
+func (a *Apps) getSpecificUser(w http.ResponseWriter, r *http.Request) {
+	name := r.FormValue("name")
+	email := r.FormValue("email")
+
+	products, err := getSpecificUser(a.DB, name, email)
 	if err != nil {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
 		return
