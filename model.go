@@ -21,7 +21,7 @@ func (u *user) getUser(db *sql.DB) error {
 }
 
 func (u *user) updateUser(db *sql.DB) error {
-	rows, err := db.Query("SELECT * from comtact where email=$1 and id!=$2", u.Email, u.ID)
+	rows, err := db.Query("SELECT * from contact where email=$1 and id!=$2", u.Email, u.ID)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -43,7 +43,7 @@ func (u *user) deleteUser(db *sql.DB) error {
 
 func (u *user) createUser(db *sql.DB) error {
 
-	rows, err := db.Query("SELECT * from comtact where email=$1", u.Email)
+	rows, err := db.Query("SELECT * from contact where email=$1", u.Email)
 	if err != nil {
 		log.Fatal(err)
 	}
