@@ -6,7 +6,9 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 	"strconv"
+	"strings"
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/gorilla/mux"
@@ -31,8 +33,33 @@ func (a *Apps) Initialize(user, password, dbname string) {
 	a.initializeRoutes()
 }
 
+func runsbefore(h http.Handler) http.Handler {
+	fn := func(w http.ResponseWriter, r *http.Request) {
+		reqKey := r.Header.Get("X-Auth-Key")
+		reqSecret := r.Header.Get("X-Auth-Secret")
+
+		var key string
+		var secret string
+		if key = os.Getenv("KEY"); len(strings.TrimSpace(key)) == 0 {
+			respondWithError(w, 500, "Invalid Key")
+			return
+		}
+		if secret = os.Getenv("SECRET"); len(strings.TrimSpace(secret)) == 0 {
+			respondWithError(w, 401, "Invalid Secret")
+			return
+		}
+		if key != reqKey || secret != reqSecret {
+			respondWithError(w, 401, "Invalid Key OR Secret")
+			return
+		}
+		h.ServeHTTP(w, r)
+	}
+
+	return http.HandlerFunc(fn)
+}
+
 func (a *Apps) Run(addr string) {
-	log.Fatal(http.ListenAndServe(addr, a.Router))
+	log.Fatal(http.ListenAndServe(addr, runsbefore(a.Router)))
 }
 
 func (a *Apps) initializeRoutes() {
