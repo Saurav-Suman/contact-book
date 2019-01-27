@@ -95,9 +95,9 @@ func getUsers(db *sql.DB, start, count int) ([]user, error) {
 func getSpecificUser(db *sql.DB, name, email string) ([]user, error) {
 	var statement string
 	if name != "" {
-		statement = fmt.Sprintf("SELECT id, name, email FROM contact where name=%s", name)
+		statement = fmt.Sprintf("SELECT id, name, email FROM contact where name='%s'", name)
 	} else {
-		statement = fmt.Sprintf("SELECT id, name, email FROM contact where email=%s", email)
+		statement = fmt.Sprintf("SELECT id, name, email FROM contact where email='%s'", email)
 	}
 
 	rows, err := db.Query(statement)
